@@ -2,11 +2,11 @@
 #include <FastLED.h>
 
 /* Number of LEDs in each box/leaf */
-#define LEDS_IN_BOX 13
+#define LEDS_IN_BOX 7
 /*The number of boxes */
-#define NUM_BOXES 8
+#define NUM_BOXES 1
 /*The pin the LED is connected to */
-#define LED_PIN 19
+#define LED_PIN 27
 /*Don't change unless you know what you're doing */
 #define TOTAL_LEDS LEDS_IN_BOX *NUM_BOXES
 
