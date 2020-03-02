@@ -8,21 +8,13 @@
 #include <BlynkSimpleEsp32.h>
 #include "Nanohex.h"
 #include "fauxmoESP.h"
+#include "credentials.h"
 
 fauxmoESP fauxmo;
 
 #define SERIAL_BAUDRATE     115200
 
 #define ID_LIGHT           "NanoLeaf"
-
-// You should get Auth Token in the Blynk App.
-// Go to the Project Settings (nut icon).
-char auth[] = "3u7aDauKmngQZXQtgsVd8azLFE0E0wyq";
-
-// Your WiFi credentials.
-// Set password to "" for open networks.
-char ssid[] = "Kirk To Enterprise";
-char pass[] = "stee1nhagen";
 
 bool party;
 bool breathing;
@@ -62,9 +54,8 @@ void setup()
   wifiSetup();
 
   hexController = new Nanohex();
-  hexController->set_mode(2);
+  hexController->set_mode(1);
   hexController->set_primary(CRGB::White);
-  hexController->set_secondary(CRGB::Blue);
 
   
   Blynk.begin(auth, ssid, pass);

@@ -174,7 +174,7 @@ class Nanohex
                 hueRandomness(50),
                 interrupt(false)
     {
-        FastLED.addLeds<WS2812B, LED_PIN, BRG>(leds, TOTAL_LEDS);
+        FastLED.addLeds<WS2811, LED_PIN, GRB>(leds, TOTAL_LEDS);
         for (uint8_t i = 0; i < NUM_BOXES; i++)
             nodes[i] = new Hexnode(i);
     }
