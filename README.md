@@ -13,28 +13,30 @@ This software uses the FastLED library and some custom classes to construct an a
 1. Open Project in Arduino IDE
 1. Copy `credentials_example.h` to `credentials.h`
 1. Set Credentials for WiFi in `credentials.h`
-```
-char ssid[] = "My WiFi Connection";
-char pass[] = "examplePassword";
-```
+    ```
+    char ssid[] = "My WiFi Connection";
+    char pass[] = "examplePassword";
+    ```
 1. Download the Blynk app and create a new project
     1. This will create an Auth key for you
 1. Add Blynk Auth key to `credentials.h`
-```
-char auth[] = "BLYNK AUTH CODE";
-```
+    ```
+    char auth[] = "BLYNK AUTH CODE";
+    ```
 1. Configure settings in `Nanohex.h`
-```
-/* Number of LEDs in each box/leaf */
-#define LEDS_IN_BOX 7
-/*The number of boxes */
-#define NUM_BOXES 8
-/*The pin the LED is connected to */
-#define LED_PIN 27
-```
+    ```
+    /* Number of LEDs in each box/leaf */
+    #define LEDS_IN_BOX 7
+    /*The number of boxes */
+    #define NUM_BOXES 8
+    /*The pin the LED is connected to */
+    #define LED_PIN 27
+    ```
 1. Configure settings in `HexLeaf.ino`
-```
-#define ID_LIGHT            "NanoLeaf"
-CRGB primary_color = CRGB(0, 153, 204);
-CRGB secondary_color = CRGB(254, 201, 1);
-```
+    ```
+    #define ID_LIGHT            "NanoLeaf"
+    CRGB primary_color = CRGB(0, 153, 204);
+    CRGB secondary_color = CRGB(254, 201, 1);
+    ```
+1. Setup the Blynk App
+![BlynkImage](https://github.com/csteamengine/HexLeaf/blob/master/images/IMG_5288%202.PNG)
