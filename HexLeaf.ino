@@ -14,11 +14,13 @@ fauxmoESP fauxmo;
 
 #define SERIAL_BAUDRATE     115200
 
-#define ID_LIGHT            "NanoLeaf"
 #define STATE_PRIMARY 1
 #define STATE_SOLID 2
 #define STATE_BREATHING 3
 #define BREATH_TIME 10000 //10 seconds
+#define ID_LIGHT            "NanoLeaf"
+CRGB primary_color = CRGB(0, 153, 204);
+CRGB secondary_color = CRGB(254, 201, 1);
 
 int state = STATE_PRIMARY;
 bool power = true;
@@ -29,11 +31,7 @@ int updated = true;
 int rgb[] = {0, 153, 204};
 Nanohex *hexController;
 bool primary_one = false;
-
 int last_time = 0;
-
-CRGB primary_color = CRGB(0, 153, 204);
-CRGB secondary_color = CRGB(254, 201, 1);
 
 BLYNK_WRITE(V0)
 {
