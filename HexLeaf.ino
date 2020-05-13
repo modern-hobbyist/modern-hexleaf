@@ -14,16 +14,56 @@ fauxmoESP fauxmo;
 
 #define SERIAL_BAUDRATE     115200
 
-#define ID_LIGHT           "NanoLeaf"
+#define ID_LIGHT            "NanoLeaf"
+#define STATE_PRIMARY 1
+#define STATE_SOLID 2
+#define STATE_BREATHING 3
+#define BREATH_TIME 10000 //10 seconds
 
-bool party;
-bool breathing;
-bool power = false;
+int state = STATE_PRIMARY;
+bool power = true;
 bool alexaToggle = false;
 bool alexaBrightness = false;
-int brightness = 128;
-
+int brightness = 255;
+int updated = true;
+int rgb[] = {0, 153, 204};
 Nanohex *hexController;
+bool primary_one = false;
+
+int last_time = 0;
+
+CRGB primary_color = CRGB(0, 153, 204);
+CRGB secondary_color = CRGB(254, 201, 1);
+
+BLYNK_WRITE(V0)
+{
+  state = param.asInt();
+  updated = true;
+}
+
+BLYNK_WRITE(V1)  
+{
+    brightness = param.asInt();
+    Serial.printf("Brightness: %d \n", brightness);
+    fauxmo.setState(ID_LIGHT, power, brightness);
+    updated = true;
+}
+
+BLYNK_WRITE(V2)
+{
+  power = param.asInt();
+  updated = true;
+}
+
+BLYNK_WRITE(V3)  
+{   
+    rgb[0] = param[0].asInt();
+    rgb[1] = param[1].asInt();
+    rgb[2] = param[2].asInt();
+    state = STATE_SOLID;
+    Blynk.virtualWrite(V0, STATE_SOLID); //Need to tell the input to default to solid
+    updated = true;
+}
 
 void wifiSetup() {
 
@@ -54,92 +94,53 @@ void setup()
   wifiSetup();
 
   hexController = new Nanohex();
-  hexController->set_mode(1);
   hexController->set_primary(CRGB::White);
 
   
   Blynk.begin(auth, ssid, pass);
-  Blynk.virtualWrite(V0, 0);
-  Blynk.virtualWrite(V1, 0);
-  Blynk.virtualWrite(V2, 0);
-  // You can also specify server:
-  //Blynk.begin(auth, ssid, pass, "blynk-cloud.com", 80);
-  //Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);
+  Blynk.virtualWrite(V0, 1);
+  Blynk.virtualWrite(V1, 255);
+  Blynk.virtualWrite(V2, 1);
+  Blynk.virtualWrite(V3, 255, 255, 255);
 
-  // By default, fauxmoESP creates it's own webserver on the defined port
-    // The TCP port must be 80 for gen3 devices (default is 1901)
-    // This has to be done before the call to enable()
-    fauxmo.createServer(true); // not needed, this is the default value
-    fauxmo.setPort(80); // This is required for gen3 devices
+  //Alexa configuration
+  fauxmo.createServer(true); // not needed, this is the default value
+  fauxmo.setPort(80); // This is required for gen3 devices
 
-    // You have to call enable(true) once you have a WiFi connection
-    // You can enable or disable the library at any moment
-    // Disabling it will prevent the devices from being discovered and switched
-    fauxmo.enable(true);
+  fauxmo.enable(true);
 
-    // You can use different ways to invoke alexa to modify the devices state:
-    // "Alexa, turn yellow lamp on"
-    // "Alexa, turn on yellow lamp
-    // "Alexa, set yellow lamp to fifty" (50 means 50% of brightness, note, this example does not use this functionality)
+  // Add virtual devices
+  fauxmo.addDevice(ID_LIGHT);
 
-    // Add virtual devices
-    fauxmo.addDevice(ID_LIGHT);
+  fauxmo.onSetState([](unsigned char device_id, const char * device_name, bool state, unsigned char value) {
+      
+      Serial.printf("[MAIN] Device #%d (%s) state: %s value: %d\n", device_id, device_name, state ? "ON" : "OFF", value);
 
-    fauxmo.onSetState([](unsigned char device_id, const char * device_name, bool state, unsigned char value) {
-        
-        // Callback when a command from Alexa is received. 
-        // You can use device_id or device_name to choose the element to perform an action onto (relay, LED,...)
-        // State is a boolean (ON/OFF) and value a number from 0 to 255 (if you say "set kitchen light to 50%" you will receive a 128 here).
-        // Just remember not to delay too much here, this is a callback, exit as soon as possible.
-        // If you have to do something more involved here set a flag and process it in your main loop.
-        
-        Serial.printf("[MAIN] Device #%d (%s) state: %s value: %d\n", device_id, device_name, state ? "ON" : "OFF", value);
+      if (strcmp(device_name, ID_LIGHT)==0) {
+          if(!power && state || power && !state){
+            alexaToggle = true;
+          }
 
-        // Checking for device_id is simpler if you are certain about the order they are loaded and it does not change.
-        // Otherwise comparing the device_name is safer.
-
-        //TODO Check if the ID is one of the ID's provided above
-        if (strcmp(device_name, ID_LIGHT)==0) {
-            if(!power && state || power && !state){
-              alexaToggle = true;
-            }
-
-            if(power && value != brightness){
-              alexaBrightness = true;
-              brightness = value;
-            }
-        }
-    });
+          if(power && value != brightness){
+            alexaBrightness = true;
+            brightness = value;
+          }
+      }
+  });
 }
 
 void loop()
 {
   Blynk.run();
   fauxmo.handle();
-  
-  if(power){
-    if(party){
-//      Serial.println("PARTY MODE!");
-    }else if(breathing){
-//      Serial.println("Breathing mode.");
-    }else{
-//      Serial.println("Steady Mode.");
-    }
-    
-  }else{
-
+  if(updated){
+    update_hexes();
   }
 
   if(alexaToggle){
     if(power){
-      Blynk.virtualWrite(V0, 0);
-      Blynk.virtualWrite(V1, 0);
-      Blynk.virtualWrite(V2, 0);
       power = false;
     }else{
-      Blynk.virtualWrite(V0, 0);
-      Blynk.virtualWrite(V1, 0);
-      Blynk.virtualWrite(V2, 1);
       power = true;
     }
     alexaToggle = false;
@@ -153,53 +154,43 @@ void loop()
   hexController->update();
 }
 
-BLYNK_WRITE(V0)
-{
-  party = param.asInt();
-  Serial.println("Party");
-  if(party){
-    breathing = false;
-    Blynk.virtualWrite(V1, 0);
-  }
-}
-
-BLYNK_WRITE(V1)
-{
-  breathing = param.asInt();
-  Serial.println("Breathing");
-  if(breathing){
-    party = false;
-    Blynk.virtualWrite(V0, 0);
-  }
-}
-
-BLYNK_WRITE(V2)
-{
-  power = param.asInt();
-  if(!power){
-    party = false;
-    breathing = false;
-    Blynk.virtualWrite(V0, 0);
-    Blynk.virtualWrite(V1, 0);
-    hexController->set_primary(CRGB::Black);
+void update_hexes(){
+  if(power){
+    hexController->set_brightness(brightness);
+    if(state == STATE_PRIMARY){ // Primary
+      updated = false;
+      //TODO set alternating hexes to Modern Hobbyist logo colors
+      hexController->set_primary(primary_color);
+      hexController->set_secondary(secondary_color);
+      for(int i = 0; i<NUM_BOXES; i++){
+        if(i % 2 == 0){
+          Serial.println("Setting primary to this hex");
+          hexController->set_color_of(i, primary_color);
+        }else{
+          Serial.println("setting secondary to this hex");
+          hexController->set_color_of(i, secondary_color);
+        }
+      }
+    }else if(state == STATE_SOLID){ // Solid
+      updated = false;
+      hexController->color_all(CRGB(rgb[0], rgb[1], rgb[2]));
+    }else if(state == STATE_BREATHING){ // Breathing
+      //Currently gets called every 10 seconds
+      if(millis() - last_time >= BREATH_TIME){
+        last_time = millis();
+        if(primary_one){
+          primary_one = false;
+          Serial.println("setting to secondary color");
+          hexController->color_all(secondary_color);
+        }else{
+          Serial.println("setting to primary color");
+          primary_one = true;
+          hexController->color_all(primary_color);
+        }
+      }
+    }
   }else{
-    hexController->set_primary(CRGB::White);
-  }
-  fauxmo.setState(ID_LIGHT, power, brightness);
-}
-
-BLYNK_WRITE(V3)  
-{
-    int r = param[0].asInt();
-    int g = param[1].asInt();
-    int b = param[2].asInt();
-    hexController->set_primary(CRGB(r,g,b));
-    Serial.printf("Primary: (%d, %d, %d) \n", r, g, b);
-}
-
-BLYNK_WRITE(V4)  
-{
-    brightness = param.asInt();
-    Serial.printf("Brightness: %d \n", brightness);
+    hexController->set_brightness(0);
     fauxmo.setState(ID_LIGHT, power, brightness);
+  }
 }
