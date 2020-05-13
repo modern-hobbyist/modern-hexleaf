@@ -39,4 +39,15 @@ This software uses the FastLED library and some custom classes to construct an a
     CRGB secondary_color = CRGB(254, 201, 1);
     ```
 1. Setup the Blynk App
-![BlynkImage](https://github.com/csteamengine/HexLeaf/blob/master/images/IMG_5288.png)
+    ![BlynkImage](https://github.com/csteamengine/HexLeaf/blob/master/images/IMG_5288.png)
+    1. Configure a Button on V2 for power
+    1. Configure the ZERGBA on V3 with the `MERGE` setting
+    1. Configure a brightness slider on V1
+    1. Configure a 'Segmented Switch' on V0 for:
+        1. Primary Mode
+        1. Solid Mode
+        1. Breathing Mode
+1. Plug it in, press Play and control your hexes!
+1. If Alexa integration is working *(currently its not)*, then have Alexa scan for new devices and include your lights in any routines you want!
+
+
