@@ -50,4 +50,6 @@ This software uses the FastLED library and some custom classes to construct an a
 1. Plug it in, press Play and control your hexes!
 1. If Alexa integration is working *(currently its not)*, then have Alexa scan for new devices and include your lights in any routines you want!
 
-
+![BlynkImage](https://github.com/csteamengine/HexLeaf/blob/master/images/IMG_2474.png)
+![BlynkImage](https://github.com/csteamengine/HexLeaf/blob/master/images/IMG_3875.png)
+![BlynkImage](https://github.com/csteamengine/HexLeaf/blob/master/images/IMG_5288.png)
