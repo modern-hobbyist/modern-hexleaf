@@ -39,4 +39,4 @@ This software uses the FastLED library and some custom classes to construct an a
     CRGB secondary_color = CRGB(254, 201, 1);
     ```
 1. Setup the Blynk App
-![BlynkImage](https://github.com/csteamengine/HexLeaf/blob/master/images/IMG_5288%202.PNG)
+![BlynkImage](https://github.com/csteamengine/HexLeaf/blob/master/images/IMG_5288.png)
