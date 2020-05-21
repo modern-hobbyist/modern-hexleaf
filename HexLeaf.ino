@@ -94,6 +94,13 @@ void setup()
   hexController = new Nanohex();
   hexController->set_primary(CRGB::White);
 
+  for(int i = 0; i < NUM_BOXES; i++){
+    reversedLEDS[i] = 0;
+  }
+
+  //Set any reversed BRG/BRG panels
+  reversedLEDS[2] = 1;
+  reversedLEDS[5] = 1;
   
   Blynk.begin(auth, ssid, pass);
   Blynk.virtualWrite(V0, 1);

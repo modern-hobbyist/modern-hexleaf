@@ -11,6 +11,7 @@
 #define TOTAL_LEDS LEDS_IN_BOX *NUM_BOXES
 
 CRGB leds[TOTAL_LEDS];
+int reversedLEDS[NUM_BOXES];
 
 class Hexnode
 {
@@ -30,6 +31,12 @@ class Hexnode
     void set_color(CRGB c)
     {
         color = c;
+        Serial.print("Red: ");
+        Serial.print(c.r);
+        Serial.print(", Green: ");
+        Serial.print(c.g);
+        Serial.print(", Blue: ");
+        Serial.println(c.b);
     }
 
     int draw()
@@ -81,7 +88,11 @@ class Nanohex
 
     void set_color_of(uint8_t idx, CRGB color)
     {
-        nodes[idx]->set_color(color);
+        if(reversedLEDS[idx] == 1){
+            nodes[idx]->set_color(CRGB(color.r, color.b, color.g));
+        }else{
+            nodes[idx]->set_color(color);
+        }
     }
 
     void update()
