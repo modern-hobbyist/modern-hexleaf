@@ -5,6 +5,9 @@ but to also turn them on/off with Alexa. These lights will be in my home office,
 # Hardware List
 * [ESP32 Dev Module](https://www.amazon.com/gp/product/B07Q576VWZ/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1)
 * [WS2811 Led Strip](https://www.amazon.com/BTF-LIGHTING-300LEDs-Addressable-Flexible-Non-waterproof/dp/B01CNL6K52/ref=sr_1_1_sspa?dchild=1&keywords=ws2811&qid=1589404282&sr=8-1-spons&psc=1&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUExRFhaSUtURTkzNkJOJmVuY3J5cHRlZElkPUEwMTEzOTI3MzlQQkpDSzNDQkomZW5jcnlwdGVkQWRJZD1BMDYwMTg0MUpGSzRBNTNJWUNUViZ3aWRnZXROYW1lPXNwX2F0ZiZhY3Rpb249Y2xpY2tSZWRpcmVjdCZkb05vdExvZ0NsaWNrPXRydWU=)
+* [Buck Converter](https://www.aliexpress.com/item/DIP-1PCS-DC-DC-Buck-Converter-Step-Down-Module-LM2596-Power-Supply-Output-1-25V-30V/32721507753.html?spm=a2g0s.9042311.0.0.27424c4dL5A972)
+* [LED Connector](https://www.amazon.com/gp/product/B01DC0KIT2/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
+* [12V Power Supply](https://www.amazon.com/gp/product/B06Y64QLBM/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1)
 * [AnyCubic i3 Mega 3d Printer](https://www.anycubic.com/collections/anycubic-mega-3d-printers/products/anycubic-i3-mega-s?variant=30151431192636)
 
 # Software 
