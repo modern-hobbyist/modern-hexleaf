@@ -7,10 +7,10 @@
 #include <WiFiClient.h>
 #include <BlynkSimpleEsp32.h>
 #include "Nanohex.h"
-#include "fauxmoESP.h"
+#include <Espalexa.h>
 #include "credentials.h"
 
-fauxmoESP fauxmo;
+Espalexa espalexa;
 
 #define SERIAL_BAUDRATE     115200
 
@@ -33,6 +33,10 @@ Nanohex *hexController;
 bool primary_one = false;
 int last_time = 0;
 
+void hexLeafChanged(EspalexaDevice* dev);
+
+EspalexaDevice* hexLeafAlexa;
+
 BLYNK_WRITE(V0)
 {
   state = param.asInt();
@@ -43,7 +47,7 @@ BLYNK_WRITE(V1)
 {
     brightness = param.asInt();
     Serial.printf("Brightness: %d \n", brightness);
-    fauxmo.setState(ID_LIGHT, power, brightness);
+    hexLeafAlexa->setValue(0);
     updated = true;
 }
 
@@ -51,6 +55,7 @@ BLYNK_WRITE(V2)
 {
   power = param.asInt();
   updated = true;
+  hexLeafAlexa->setState(power);
 }
 
 BLYNK_WRITE(V3)  
@@ -109,46 +114,19 @@ void setup()
   Blynk.virtualWrite(V3, 255, 255, 255);
 
   //Alexa configuration
-  fauxmo.createServer(true); // not needed, this is the default value
-  fauxmo.setPort(80); // This is required for gen3 devices
+  hexLeafAlexa = new EspalexaDevice("Hex Leaf", hexLeafChanged, EspalexaDeviceType::dimmable);
+  espalexa.addDevice(hexLeafAlexa);
+  espalexa.begin();
 
-  fauxmo.enable(true);
-
-  // Add virtual devices
-  fauxmo.addDevice(ID_LIGHT);
-
-  fauxmo.onSetState([](unsigned char device_id, const char * device_name, bool state, unsigned char value) {
-      
-      Serial.printf("[MAIN] Device #%d (%s) state: %s value: %d\n", device_id, device_name, state ? "ON" : "OFF", value);
-
-      if (strcmp(device_name, ID_LIGHT)==0) {
-          if(!power && state || power && !state){
-            alexaToggle = true;
-          }
-
-          if(power && value != brightness){
-            alexaBrightness = true;
-            brightness = value;
-          }
-      }
-  });
+  hexLeafAlexa->setState(true);
 }
 
 void loop()
 {
   Blynk.run();
-  fauxmo.handle();
+  espalexa.loop();
   if(updated){
     update_hexes();
-  }
-
-  if(alexaToggle){
-    if(power){
-      power = false;
-    }else{
-      power = true;
-    }
-    alexaToggle = false;
   }
 
   if(alexaBrightness){
@@ -157,6 +135,24 @@ void loop()
   }
 
   hexController->update();
+}
+
+void hexLeafChanged(EspalexaDevice* d) {
+  if (d == nullptr) return; //this is good practice, but not required
+
+  Serial.print("Power changed to ");
+  int inputBrightness = d->getValue();
+
+  Serial.println(d->getState());
+
+  power = d->getState();
+  Blynk.virtualWrite(V2, power);
+
+  if(inputBrightness != brightness){
+    alexaBrightness = true;
+    brightness = inputBrightness;
+  }
+  updated = true;
 }
 
 void update_hexes(){
@@ -196,6 +192,7 @@ void update_hexes(){
     }
   }else{
     hexController->set_brightness(0);
-    fauxmo.setState(ID_LIGHT, power, brightness);
+    hexLeafAlexa->setValue(0);
+    updated = false;
   }
 }
