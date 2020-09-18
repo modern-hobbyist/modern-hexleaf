@@ -1,6 +1,6 @@
 # HexLeaf
 This project is my attempt to create my own NanoLeafs based on NanoLeafs and by adding alexa to it. This will allow me to not only control the colors and brightness of the lights with the Blynk app, 
-but to also turn them on/off with Alexa. These lights will be in my home office, so I can say "Alexa, turn on the office" and she will turn all my office lights on, including the HexLeaf setup. ***However the fauxmo library I'm currently using for Alexa integration does not seem to work with the most recent Echo update, I will update this when the library is updated.***
+but to also turn them on/off with Alexa. These lights will be in my home office, so I can say "Alexa, turn on the office" and she will turn all my office lights on, including the HexLeaf setup.
 
 # Hardware List
 * [ESP32 Dev Module](https://www.amazon.com/gp/product/B07Q576VWZ/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1)
@@ -52,7 +52,9 @@ This software uses the FastLED library and some custom classes to construct an a
         
         ![BlynkImage](https://github.com/csteamengine/HexLeaf/blob/master/images/IMG_5288.png)
 1. Plug it in, press Play and control your hexes!
-1. If Alexa integration is working *(currently its not)*, then have Alexa scan for new devices and include your lights in any routines you want!
+1. Have Alexa scan for new devices and add the newly found light to any groups you want. 
+    1. I have an "Office" group so I can turn all my lights on and off by saying "Alexa, start up the office" or "Alexa, shut down the office."
+
 
 ![BlynkImage](https://github.com/csteamengine/HexLeaf/blob/master/images/IMG_2474.png)
 ![BlynkImage](https://github.com/csteamengine/HexLeaf/blob/master/images/IMG_3080.png)
